@@ -1,15 +1,14 @@
-🚀 n8n Automation Workflows — Course Level 1
-📌 Overview
+n8n Automation Workflows — Course Level 1
+Overview
 
-This repository contains automation workflows built using n8n as part of completing the official n8n Course – Level 1.
-The workflows demonstrate practical automation use cases involving scheduling, API integration, conditional logic, and JavaScript-based data processing.
+This repository contains automation workflows built using n8n as part of completing the official n8n Course – Level 1. The workflows demonstrate practical automation use cases involving scheduling, API integration, conditional logic, and JavaScript-based data processing.
 
-🎓 Certification
+Certification
 
-✅ Completed n8n Course – Level 1 (Official)
+Completed n8n Course – Level 1 (Official)
 This course covers the fundamentals of building, managing, and scheduling workflows in n8n.
 
-🧠 What I Learned
+What I Learned
 
 Through this course and hands-on practice, I gained experience with:
 
@@ -29,26 +28,26 @@ Processing and aggregating data using JavaScript Code nodes
 
 Controlling workflow execution and exporting workflows
 
-⚙️ Sample Workflow Included
+Sample Workflow Included
 
 This repository includes example workflows such as:
 
-⏰ Scheduled Automation
+Scheduled Automation
 
-Runs automatically using a Schedule Trigger
+Runs automatically using a Schedule Trigger.
 
-🌐 API Integration
+API Integration
 
-Fetches data using HTTP Request
+Fetches data using HTTP Request nodes.
 
-🔀 Conditional Logic
+Conditional Logic
 
-Filters or branches logic using IF nodes
+Filters or branches logic using IF nodes.
 
-🧮 Data Processing
+Data Processing
 
-Aggregates and transforms data using JavaScript
+Aggregates and transforms data using JavaScript.
 
-🔔 Notification
+Notification
 
-Sends results to external services (e.g., Discord)
+Sends results to external services (for example, Discord).
