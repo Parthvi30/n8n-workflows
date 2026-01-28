@@ -1,0 +1,723 @@
+{
+  "name": "Scheduling the Workflow",
+  "nodes": [
+    {
+      "parameters": {
+        "url": "https://internal.users.n8n.cloud/webhook/custom-erp",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "unique_id",
+              "value": "ba5028d39566bc915d97e130aa187afc"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        192,
+        -48
+      ],
+      "id": "8551b7b7-3195-4c41-a615-b117278fc4ba",
+      "name": "HTTP Request1",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "kyDnxVS19RtLraBc",
+          "name": "Header Auth account"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        -80,
+        -208
+      ],
+      "id": "e4f38c35-0911-4047-9619-539bde94e316",
+      "name": "When clicking ‘Execute workflow’"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "3c180a91-cb25-4b3f-863c-608ed2a8dd2b",
+              "leftValue": "={{ $json.orderStatus }}",
+              "rightValue": "processing",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            },
+            {
+              "id": "e65f214e-d939-4208-91d8-9ba4efdb1b99",
+              "leftValue": "={{ $json.employeeName }}",
+              "rightValue": "Mario",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        432,
+        -48
+      ],
+      "id": "01e86b1d-5191-4306-9fd1-2e3671015327",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "35ba2849-c0f0-43bb-bd53-fd9892e2df11",
+              "name": "orderID",
+              "value": "={{ $json.orderID }}",
+              "type": "number"
+            },
+            {
+              "id": "14d9675f-a79f-4600-ac1e-7effd85524c3",
+              "name": "employeeName",
+              "value": "={{ $json.employeeName }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        912,
+        -224
+      ],
+      "id": "99aadfed-3b17-4801-a266-1dfd19d2a4c2",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "operation": "create",
+        "base": {
+          "__rl": true,
+          "value": "appW47KhXaAjgdXMZ",
+          "mode": "list",
+          "cachedResultName": "n8n Beginner Course",
+          "cachedResultUrl": "https://airtable.com/appW47KhXaAjgdXMZ"
+        },
+        "table": {
+          "__rl": true,
+          "value": "tblAkoiiV8oqW82jR",
+          "mode": "list",
+          "cachedResultName": "Processing",
+          "cachedResultUrl": "https://airtable.com/appW47KhXaAjgdXMZ/tblAkoiiV8oqW82jR"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "orderID": "={{ $json.orderID }}",
+            "employeeName": "={{ $json.employeeName }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "orderID",
+              "displayName": "orderID",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "number",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "employeeName",
+              "displayName": "employeeName",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.airtable",
+      "typeVersion": 2.1,
+      "position": [
+        1200,
+        -160
+      ],
+      "id": "895ca341-d4bb-4f65-81f0-0ae623642a0c",
+      "name": "Create a record",
+      "credentials": {
+        "airtableTokenApi": {
+          "id": "MWwgzEKzn0EG8HZU",
+          "name": "AirTable n8n Beginner course"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// Get all incoming items from the previous node (array of input objects)\nlet items = $input.all();\n\n// Store the total number of booked orders (number of items)\nlet totalBooked = items.length;\n\n// Initialize a variable to store the sum of all order prices\nlet bookedSum = 0;\n\n// Loop through each item in the input array\nfor (let i = 0; i < items.length; i++) {\n\n  // Add the orderPrice of the current item to bookedSum\n  bookedSum = bookedSum + items[i].json.orderPrice;\n}\n\n// Return the result as a single output object\n// totalBooked → number of orders\n// bookedSum   → total sum of all order prices\nreturn [{ \n  json: { \n    totalBooked, \n    bookedSum \n  } \n}];\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        640,
+        48
+      ],
+      "id": "a695c61f-d3cf-460b-868a-96338dfc1226",
+      "name": "Code in JavaScript"
+    },
+    {
+      "parameters": {
+        "authentication": "webhook",
+        "content": "=This week we've {{$json[\"totalBooked\"]}} booked orders with a total value of {{$json[\"bookedSum\"]}}. My Unique ID: {{ $('HTTP Request1').params[\"headerParameters\"][\"parameters\"][0][\"value\"] }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.discord",
+      "typeVersion": 2,
+      "position": [
+        848,
+        48
+      ],
+      "id": "0279cf4f-dd76-4a8c-a5f0-c7d3f5122d00",
+      "name": "Discord",
+      "webhookId": "fc0718c9-494c-4f1f-84e0-b342eea87e22",
+      "credentials": {
+        "discordWebhookApi": {
+          "id": "Eev3PT1nj2b2bZku",
+          "name": "Discord Webhook account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "weeks",
+              "triggerAtDay": [
+                1
+              ],
+              "triggerAtHour": 9
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.3,
+      "position": [
+        -160,
+        176
+      ],
+      "id": "6742e2e4-5b65-440d-a02d-48d6855d2ba4",
+      "name": "Schedule Trigger"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Get all incoming items from the previous node (array of input objects)\nlet items = $input.all();\n\n// Store the total number of booked orders (number of items)\nlet totalBooked = items.length;\n\n// Initialize a variable to store the sum of all order prices\nlet bookedSum = 0;\n\n// Loop through each item in the input array\nfor (let i = 0; i < items.length; i++) {\n\n  // Add the orderPrice of the current item to bookedSum\n  bookedSum = bookedSum + items[i].json.orderPrice;\n}\n\n// Return the result as a single output object\n// totalBooked → number of orders\n// bookedSum   → total sum of all order prices\nreturn [{ \n  json: { \n    totalBooked, \n    bookedSum \n  } \n}];\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        672,
+        -192
+      ],
+      "id": "cd652a6b-a0f7-406c-9272-ad7623a35d51",
+      "name": "Code in JavaScript1"
+    }
+  ],
+  "pinData": {
+    "HTTP Request1": [
+      {
+        "json": {
+          "orderID": 1,
+          "customerID": 8,
+          "employeeName": "Mario",
+          "orderPrice": 150.32,
+          "orderStatus": "processing"
+        },
+        "pairedItem": {
+          "item": 0
+        }
+      },
+      {
+        "json": {
+          "orderID": 2,
+          "customerID": 5,
+          "employeeName": "Mario",
+          "orderPrice": 161.1,
+          "orderStatus": "booked"
+        },
+        "pairedItem": {
+          "item": 0
+        }
+      },
+      {
+        "json": {
+          "orderID": 3,
+          "customerID": 1,
+          "employeeName": "Samir",
+          "orderPrice": 111.19,
+          "orderStatus": "booked"
+        },
+        "pairedItem": {
+          "item": 0
+        }
+      },
+      {
+        "json": {
+          "orderID": 4,
+          "customerID": 2,
+          "employeeName": "Amelie",
+          "orderPrice": 61.16,
+          "orderStatus": "booked"
+        },
+        "pairedItem": {
+          "item": 0
+        }
+      },
+      {
+        "json": {
+          "orderID": 5,
+          "customerID": 10,
+          "employeeName": "Amelie",
+          "orderPrice": 191.36,
+          "orderStatus": "booked"
+        },
+        "pairedItem": {
+          "item": 0
+        }
+      },
+      {
+        "json": {
+          "orderID": 6,
+          "customerID": 2,
+          "employeeName": "Mario",
+          "orderPrice": 165.65,
+          "orderStatus": "booked"
+        },
+        "pairedItem": {
+          "item": 0
+        }
+      },
+      {
+        "json": {
+          "orderID": 7,
+          "customerID": 9,
+          "employeeName": "Amelie",
+          "orderPrice": 135.02,
+          "orderStatus": "processing"
+        },
+        "pairedItem": {
+          "item": 0
+        }
+      },
+      {
+        "json": {
+          "orderID": 8,
+          "customerID": 4,
+          "employeeName": "Mario",
+          "orderPrice": 163.38,
+          "orderStatus": "processing"
+        },
+        "pairedItem": {
+          "item": 0
+        }
+      },
+      {
+        "json": {
+          "orderID": 9,
+          "customerID": 10,
+          "employeeName": "Sarah",
+          "orderPrice": 153.01,
+          "orderStatus": "booked"
+        },
+        "pairedItem": {
+          "item": 0
+        }
+      },
+      {
+        "json": {
+          "orderID": 10,
+          "customerID": 8,
+          "employeeName": "Sarah",
+          "orderPrice": 164.88,
+          "orderStatus": "booked"
+        },
+        "pairedItem": {
+          "item": 0
+        }
+      },
+      {
+        "json": {
+          "orderID": 11,
+          "customerID": 3,
+          "employeeName": "Sarah",
+          "orderPrice": 90.56,
+          "orderStatus": "processing"
+        },
+        "pairedItem": {
+          "item": 0
+        }
+      },
+      {
+        "json": {
+          "orderID": 12,
+          "customerID": 6,
+          "employeeName": "Mario",
+          "orderPrice": 168.48,
+          "orderStatus": "processing"
+        },
+        "pairedItem": {
+          "item": 0
+        }
+      },
+      {
+        "json": {
+          "orderID": 13,
+          "customerID": 1,
+          "employeeName": "Mario",
+          "orderPrice": 138.99,
+          "orderStatus": "processing"
+        },
+        "pairedItem": {
+          "item": 0
+        }
+      },
+      {
+        "json": {
+          "orderID": 14,
+          "customerID": 9,
+          "employeeName": "Yoko",
+          "orderPrice": 108.7,
+          "orderStatus": "processing"
+        },
+        "pairedItem": {
+          "item": 0
+        }
+      },
+      {
+        "json": {
+          "orderID": 15,
+          "customerID": 9,
+          "employeeName": "Samir",
+          "orderPrice": 32.58,
+          "orderStatus": "processing"
+        },
+        "pairedItem": {
+          "item": 0
+        }
+      },
+      {
+        "json": {
+          "orderID": 16,
+          "customerID": 4,
+          "employeeName": "Amelie",
+          "orderPrice": 124.97,
+          "orderStatus": "processing"
+        },
+        "pairedItem": {
+          "item": 0
+        }
+      },
+      {
+        "json": {
+          "orderID": 17,
+          "customerID": 8,
+          "employeeName": "Amelie",
+          "orderPrice": 133.79,
+          "orderStatus": "booked"
+        },
+        "pairedItem": {
+          "item": 0
+        }
+      },
+      {
+        "json": {
+          "orderID": 18,
+          "customerID": 5,
+          "employeeName": "Sarah",
+          "orderPrice": 192.3,
+          "orderStatus": "booked"
+        },
+        "pairedItem": {
+          "item": 0
+        }
+      },
+      {
+        "json": {
+          "orderID": 19,
+          "customerID": 2,
+          "employeeName": "Samir",
+          "orderPrice": 24.07,
+          "orderStatus": "processing"
+        },
+        "pairedItem": {
+          "item": 0
+        }
+      },
+      {
+        "json": {
+          "orderID": 20,
+          "customerID": 2,
+          "employeeName": "Amelie",
+          "orderPrice": 101.71,
+          "orderStatus": "processing"
+        },
+        "pairedItem": {
+          "item": 0
+        }
+      },
+      {
+        "json": {
+          "orderID": 21,
+          "customerID": 5,
+          "employeeName": "Mario",
+          "orderPrice": 160.08,
+          "orderStatus": "booked"
+        },
+        "pairedItem": {
+          "item": 0
+        }
+      },
+      {
+        "json": {
+          "orderID": 22,
+          "customerID": 10,
+          "employeeName": "Amelie",
+          "orderPrice": 102.58,
+          "orderStatus": "booked"
+        },
+        "pairedItem": {
+          "item": 0
+        }
+      },
+      {
+        "json": {
+          "orderID": 23,
+          "customerID": 3,
+          "employeeName": "Yoko",
+          "orderPrice": 48.37,
+          "orderStatus": "processing"
+        },
+        "pairedItem": {
+          "item": 0
+        }
+      },
+      {
+        "json": {
+          "orderID": 24,
+          "customerID": 8,
+          "employeeName": "Mario",
+          "orderPrice": 55.9,
+          "orderStatus": "booked"
+        },
+        "pairedItem": {
+          "item": 0
+        }
+      },
+      {
+        "json": {
+          "orderID": 25,
+          "customerID": 4,
+          "employeeName": "Sarah",
+          "orderPrice": 27.76,
+          "orderStatus": "processing"
+        },
+        "pairedItem": {
+          "item": 0
+        }
+      },
+      {
+        "json": {
+          "orderID": 26,
+          "customerID": 7,
+          "employeeName": "Mario",
+          "orderPrice": 78.7,
+          "orderStatus": "processing"
+        },
+        "pairedItem": {
+          "item": 0
+        }
+      },
+      {
+        "json": {
+          "orderID": 27,
+          "customerID": 2,
+          "employeeName": "Mario",
+          "orderPrice": 153.73,
+          "orderStatus": "booked"
+        },
+        "pairedItem": {
+          "item": 0
+        }
+      },
+      {
+        "json": {
+          "orderID": 28,
+          "customerID": 6,
+          "employeeName": "Sarah",
+          "orderPrice": 165.65,
+          "orderStatus": "booked"
+        },
+        "pairedItem": {
+          "item": 0
+        }
+      },
+      {
+        "json": {
+          "orderID": 29,
+          "customerID": 6,
+          "employeeName": "Mario",
+          "orderPrice": 138.99,
+          "orderStatus": "booked"
+        },
+        "pairedItem": {
+          "item": 0
+        }
+      },
+      {
+        "json": {
+          "orderID": 30,
+          "customerID": 7,
+          "employeeName": "Sarah",
+          "orderPrice": 139.77,
+          "orderStatus": "booked"
+        },
+        "pairedItem": {
+          "item": 0
+        }
+      }
+    ]
+  },
+  "connections": {
+    "When clicking ‘Execute workflow’": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request1": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Code in JavaScript",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "Create a record",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript": {
+      "main": [
+        [
+          {
+            "node": "Discord",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Schedule Trigger": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript1": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "availableInMCP": false,
+    "timeSavedMode": "fixed",
+    "timezone": "Asia/Kolkata",
+    "callerPolicy": "workflowsFromSameOwner",
+    "executionTimeout": -1
+  },
+  "versionId": "ed727e3b-b500-4110-b9f0-9df6ebf4cf45",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "a856e2f228ef137f02d25ada90300c3a3f53734cda0673831567e868c59ad4e3"
+  },
+  "id": "zYrdwPhucSGkPBVc",
+  "tags": []
+}
